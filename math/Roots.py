@@ -100,19 +100,23 @@ class Roots():
         self.eps = eps
         self.debug = debug
         
-        curr_df_size = self.iter_df.size
-        
-        if curr_df_size == 0:
+        if self.iter_df.size == 0:
             if self.debug:
-                print("Newton Method starts NOW!")
+                print("Newton Method starts NOW!",
+                      "Initializing first row...",
+                      sep="\n")
+                
+                first_row = [self.x_start, 
+                             self.f(self.x_start), 
+                             np.NAN, 
+                             np.NAN, 
+                             self.Jf(self.x_start)]
+                self.iter_df.loc[self.iter_df.size] = first_row
         else:
             pass
         
         if self.debug:
             print(self.iter_df)
-
-    def Secant_Method(self):
-        pass
 
 
 def Demo_Funcs():
