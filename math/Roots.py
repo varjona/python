@@ -4,8 +4,8 @@
 Created on Sat Jun  1 10:23:55 2019
 @author: victor
 """
-# TODO: fix NM and SM to be part of class
-# TODO: check if we're using proper terminology!
+# TODO: Make Jacobian/derivative of "f" optional! If not available, then
+#   default to Secant Method.
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,7 +26,7 @@ class Roots():
        if no Jacobian is defined!
     """
 
-    def __init__(self):
+    def __init__(self, f, Jf):
         """
         The Roots class initialization starts by generating a Pandas DataFrame
         where the approximations, the output of the approximation,
@@ -39,27 +39,9 @@ class Roots():
                      "df_x": [],    # Differential between approximations of f(x)
                      "Jf_x": []}    # Jacobian/Derivative (if available) of f(x)
         
-        self.iter_df = pd.DataFrame({"x": [],
-                                     "f_x": [],
-                                     "dx": [],
-                                     "df_x": [],
-                                     "Jf_x": []})
-
-    # Define the class instance's function.
-    def Define_Function(self, f):
         self.f = f
-
-    # Define the class instance's Jacobian function.
-    def Define_Jacobian_Function(self, Jf):
         self.Jf = Jf
-
-    # Call a class instance's function to use.
-    def Function(self, x):
-        return self.f(x)
-
-    # Call a class instance's Jacobian to use.
-    def Jacobian_Function(self, x):
-        return self.Jf(x)
+        self.iter_df = pd.DataFrame(dict_init)
 
     # Iteration function
     def Iterate(self):
@@ -109,29 +91,23 @@ class Roots():
         # Add row to DataFrame.
         self.iter_df.loc[len_iter_df] = nu_row
 
-    def Newton_Method(self, x_start=0, des_y=0, eps=np.finfo(float).eps, debug=False):
+    def Newton_Method(self, x_start=0, des_y=0, eps=np.finfo(float).eps,
+                      debug=False):
         '''
         '''
         self.x_start = x_start
         self.des_y = des_y
         self.eps = eps
         self.debug = debug
-
-        if self.debug:
-            print("Newton Method starts NOW!",
-                  "Generating first row...",
-                  sep="\n")
-
-        # Collect current "dx" if it exists, else, initialize it to "np.NAN"
-        try:
-            curr_dx = self.iter_df.iloc[-1]["dx"]
-        except:
-            curr_dx = np.NAN
-
-        while curr_dx == np.NAN or np.linalg.norm(curr_dx) > self.eps:
-            self.Iterate()
-            curr_dx = self.iter_df.iloc[-1]["dx"]
-
+        
+        curr_df_size = self.iter_df.size
+        
+        if curr_df_size == 0:
+            if self.debug:
+                print("Newton Method starts NOW!")
+        else:
+            pass
+        
         if self.debug:
             print(self.iter_df)
 
@@ -180,32 +156,29 @@ if __name__ == "__main__":
     print("Starting quadratic demo!")
     [f, Jf] = Demo_Funcs()
 
-    quad_rooty = Roots()
-    quad_rooty.Define_Function(f)
-    quad_rooty.Define_Jacobian_Function(Jf)
-    quad_rooty.Newton_Method(eps=0.0000001,
-                             x_start=-999)
+    quad_rooty = Roots(f, Jf)
+    quad_rooty.Newton_Method(eps=0.0000001, x_start=-999, debug=True)
 
-    print("Starting non-linear system of equations demo 1!")
-    non_linear_sys_eq_rooty = Roots()
-    [f, Jf] = Demo_Funcs2()
+    # print("Starting non-linear system of equations demo 1!")
+    # non_linear_sys_eq_rooty = Roots()
+    # [f, Jf] = Demo_Funcs2()
 
-    non_linear_sys_eq_rooty.Define_Function(f)
-    non_linear_sys_eq_rooty.Define_Jacobian_Function(Jf)
-    dest_y = np.array([1, 6])
-    start_x = np.array([3.8, 1.9])
-    non_linear_sys_eq_rooty.Newton_Method(x_start=start_x,
-                                          des_y=dest_y,
-                                          eps=0.0000001)
+    # non_linear_sys_eq_rooty.Define_Function(f)
+    # non_linear_sys_eq_rooty.Define_Jacobian_Function(Jf)
+    # dest_y = np.array([1, 6])
+    # start_x = np.array([3.8, 1.9])
+    # non_linear_sys_eq_rooty.Newton_Method(x_start=start_x,
+    #                                       des_y=dest_y,
+    #                                       eps=0.0000001)
 
-    print("Starting non-linear system of equations demo 2!")
-    non_linear_sys_eq_rooty2 = Roots()
-    [f, Jf] = Demo_Funcs2()
+    # print("Starting non-linear system of equations demo 2!")
+    # non_linear_sys_eq_rooty2 = Roots()
+    # [f, Jf] = Demo_Funcs2()
 
-    non_linear_sys_eq_rooty2.Define_Function(f)
-    non_linear_sys_eq_rooty2.Define_Jacobian_Function(Jf)
-    dest_y = np.array([1, 6])
-    start_x = np.array([-10, 5])
-    non_linear_sys_eq_rooty2.Newton_Method(x_start=start_x,
-                                           des_y=dest_y,
-                                           eps=0.0000001)
+    # non_linear_sys_eq_rooty2.Define_Function(f)
+    # non_linear_sys_eq_rooty2.Define_Jacobian_Function(Jf)
+    # dest_y = np.array([1, 6])
+    # start_x = np.array([-10, 5])
+    # non_linear_sys_eq_rooty2.Newton_Method(x_start=start_x,
+    #                                        des_y=dest_y,
+    #                                        eps=0.0000001)
