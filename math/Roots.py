@@ -34,7 +34,7 @@ class Roots():
         it has been defined, are stored. 
         """
         dict_init = {"x": [],       # Approximations to x
-                     "f_x": [],     # Outpus of approximation to x
+                     "f_x": [],     # Output of approximation to x
                      "dx": [],      # Differential between approximations of x
                      "df_x": [],    # Differential between approximations of f(x)
                      "Jf_x": []}    # Jacobian/Derivative (if available) of f(x)
@@ -109,8 +109,7 @@ class Roots():
         # Add row to DataFrame.
         self.iter_df.loc[len_iter_df] = nu_row
 
-    def Newton_Method(self, x_start=0, des_y=0, eps=np.finfo(float).eps,
-                      debug=False):
+    def Newton_Method(self, x_start=0, des_y=0, eps=np.finfo(float).eps, debug=False):
         '''
         '''
         self.x_start = x_start
