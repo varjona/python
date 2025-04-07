@@ -45,7 +45,7 @@ class Roots():
 
     # Iteration function
     def Iterate(self):
-        len_iter_df = len(self.iter_df.index)
+        len_iter_df = len(self.iter_df)
         if self.debug:
             print(f"\nIteration number {len_iter_df}!")
 
@@ -100,6 +100,8 @@ class Roots():
         self.eps = eps
         self.debug = debug
         
+        iter_df_len = len(self.iter_df)
+        
         if self.iter_df.size == 0:
             if self.debug:
                 print("Newton Method starts NOW!",
@@ -111,7 +113,7 @@ class Roots():
                              np.NAN, 
                              np.NAN, 
                              self.Jf(self.x_start)]
-                self.iter_df.loc[self.iter_df.size] = first_row
+                self.iter_df.loc[iter_df_len] = first_row
         else:
             pass
         
