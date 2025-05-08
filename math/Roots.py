@@ -102,24 +102,16 @@ class Roots():
         
         iter_df_len = len(self.iter_df)
         
-        if self.iter_df.size == 0:
-            if self.debug:
-                print("Newton Method starts NOW!",
-                      "Initializing first row...",
-                      sep="\n")
-                
-                first_row = [self.x_start, 
-                             self.f(self.x_start), 
-                             np.NAN, 
-                             np.NAN, 
-                             self.Jf(self.x_start)]
-                self.iter_df.loc[iter_df_len] = first_row
-        else:
-            pass
+        print("Newton Method starts NOW!",
+              "Initializing first row...",
+              sep="\n")
         
-        if self.debug:
-            print(self.iter_df)
-
+        first_row = [self.x_start, 
+                     self.f(self.x_start), 
+                     np.NAN, 
+                     np.NAN, 
+                     self.Jf(self.x_start)]
+        self.iter_df.loc[iter_df_len] = first_row
 
 def Demo_Funcs():
 

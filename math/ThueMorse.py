@@ -40,8 +40,7 @@ def Thue_Morse_Seq(n):
 
 def Step_Forward(v, theta):
     for_stp = np.array([[1], [0]])
-    M = np.matrix([[np.cos(theta), -np.sin(theta)],
-                  [np.sin(theta), np.cos(theta)]])
+    M = np.matrix([[np.cos(theta), -np.sin(theta)], [np.sin(theta), np.cos(theta)]])
     nu = M@for_stp + v
     return nu.item(0), nu.item(1)
 

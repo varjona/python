@@ -33,9 +33,9 @@ DESCRIPTION
 # CONTENT ------------------------------------------------------------------- #
 
 def ContinuousFibonacci(nth_val):
-    fib_n = np.complex(np.power((1+np.sqrt(5))/2, nth_val))
-    weird_phi = np.complex((1-np.sqrt(5))/2)
-    fib_n -= np.power(weird_phi, nth_val)
+    fib_n = complex(np.power((1+np.sqrt(5))/2, nth_val))
+    weird_phi = complex((1-np.sqrt(5))/2)
+    fib_n -= complex(np.power(weird_phi, nth_val))
     return fib_n/np.sqrt(5)
 
 def FibonacciSpiralPlot(up_to, res = 100):
