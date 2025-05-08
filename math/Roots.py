@@ -105,14 +105,14 @@ class Roots():
         print("Newton Method starts NOW!",
               "Initializing first row...",
               sep="\n")
+        self.iter_df.loc[iter_df_len] = [self.x_start, 
+                                         self.f(self.x_start),
+                                         np.NAN, 
+                                         np.NAN, 
+                                         self.Jf(self.x_start)]
         
-        first_row = [self.x_start, 
-                     self.f(self.x_start), 
-                     np.NAN, 
-                     np.NAN, 
-                     self.Jf(self.x_start)]
-        self.iter_df.loc[iter_df_len] = first_row
-
+        
+        
 def Demo_Funcs():
 
     def f(x):
