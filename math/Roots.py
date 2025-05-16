@@ -26,7 +26,7 @@ class Roots():
        if no Jacobian is defined!
     """
 
-    def __init__(self, f, Jf):
+    def __init__(self, f, Jf, debug=True):
         """
         The Roots class initialization starts by generating a Pandas DataFrame
         where the approximations, the output of the approximation,
@@ -42,6 +42,8 @@ class Roots():
         self.f = f
         self.Jf = Jf
         self.iter_df = pd.DataFrame(dict_init)
+                
+        self.debug = debug
 
     # Iteration function
     def Iterate(self):
@@ -52,10 +54,10 @@ class Roots():
         # If this is the first iteration, then populate values for first row!
         if len_iter_df == 0:
             nu_row = [self.x_start,                         # First guess
-                      self.Function(self.x_start),          # First output
+                      self.f(self.x_start),          # First output
                       np.NAN,                               # Change for xs
                       np.NAN,                               # Change for ys
-                      self.Jacobian_Function(self.x_start)]  # Actual Jacobian
+                      self.Jf(self.x_start)]  # Actual Jacobian
 
         # If this is the first or later iteration, then...
         elif len_iter_df > 0:
@@ -75,16 +77,17 @@ class Roots():
                 nu_x = pre_x - pre_inv_Jf_x*(pre_f_x - self.des_y)
 
             # Make new f_x
-            nu_f_x = self.Function(nu_x)
+            nu_f_x = self.f(nu_x)
 
             # Make new row
             nu_row = [nu_x,
                       nu_f_x,
                       nu_x - pre_x,
                       nu_f_x - pre_f_x,
-                      self.Jacobian_Function(nu_x)]
-
-        nu_row = np.asarray(nu_row, dtype=object)
+                      self.Jf(nu_x)]
+            
+            print(nu_row)
+        #nu_row = np.asarray(nu_row)
         if self.debug:
             print(nu_row)
 
@@ -99,19 +102,15 @@ class Roots():
         self.des_y = des_y
         self.eps = eps
         self.debug = debug
-        
-        iter_df_len = len(self.iter_df)
-        
+                
         print("Newton Method starts NOW!",
               "Initializing first row...",
               sep="\n")
-        self.iter_df.loc[iter_df_len] = [self.x_start, 
-                                         self.f(self.x_start),
-                                         np.NAN, 
-                                         np.NAN, 
-                                         self.Jf(self.x_start)]
-        
-        
+        for ii in range(0, 2):
+            self.Iterate()
+            
+        while np.linalg.norm(self.iter_df.iloc[-1]["dx"]) > self.eps:
+            self.Iterate()
         
 def Demo_Funcs():
 
@@ -154,20 +153,21 @@ if __name__ == "__main__":
     print("Starting quadratic demo!")
     [f, Jf] = Demo_Funcs()
 
-    quad_rooty = Roots(f, Jf)
-    quad_rooty.Newton_Method(eps=0.0000001, x_start=-999, debug=True)
+    quad_rooty = Roots(f, Jf, debug=True)
+    quad_rooty.Newton_Method(eps=0.0000001, x_start=-999)
 
-    # print("Starting non-linear system of equations demo 1!")
-    # non_linear_sys_eq_rooty = Roots()
-    # [f, Jf] = Demo_Funcs2()
-
+    print("Starting non-linear system of equations demo 1!")
+    [f, Jf] = Demo_Funcs2()
+    non_linear_sys_eq_rooty = Roots(f, Jf, debug=True)
+    
+    dest_y = np.array([1, 6])
+    start_x = np.array([3.8, 1.9])
+    non_linear_sys_eq_rooty.Newton_Method(x_start=start_x,
+                                          des_y=dest_y,
+                                          eps=0.0000001)
+    
     # non_linear_sys_eq_rooty.Define_Function(f)
     # non_linear_sys_eq_rooty.Define_Jacobian_Function(Jf)
-    # dest_y = np.array([1, 6])
-    # start_x = np.array([3.8, 1.9])
-    # non_linear_sys_eq_rooty.Newton_Method(x_start=start_x,
-    #                                       des_y=dest_y,
-    #                                       eps=0.0000001)
 
     # print("Starting non-linear system of equations demo 2!")
     # non_linear_sys_eq_rooty2 = Roots()
