@@ -49,26 +49,29 @@ class Roots():
     def Iterate(self):
         len_iter_df = len(self.iter_df)
         if self.debug:
-            print(f"\nIteration number {len_iter_df}!")
+            print(f"\nRow number {len_iter_df}!")
 
         # If this is the first iteration, then populate values for first row!
         if len_iter_df == 0:
-            nu_row = [self.x_start,                         # First guess
-                      self.f(self.x_start),          # First output
-                      np.NAN,                               # Change for xs
-                      np.NAN,                               # Change for ys
-                      self.Jf(self.x_start)]  # Actual Jacobian
+            # First guess
+            # First output
+            # Change for xs
+            # Change for ys
+            # Actual Jacobian
+            nu_row = [self.x_start,
+                      self.f(self.x_start),
+                      np.NAN,
+                      np.NAN,
+                      self.Jf(self.x_start)]
 
-        # If this is the first or later iteration, then...
         elif len_iter_df > 0:
-            # Prep variables for use...
+            # Previous guesses
             pre_row = self.iter_df.iloc[-1]
-
             pre_x = pre_row["x"]
             pre_f_x = pre_row["f_x"]
             pre_Jf_x = pre_row["Jf_x"]
 
-            # Generate new values for new row...
+            # New values and changes between calculations
             try:
                 pre_inv_Jf_x = np.linalg.inv(pre_Jf_x)
                 nu_x = pre_x - pre_inv_Jf_x@(pre_f_x - self.des_y)
@@ -85,11 +88,9 @@ class Roots():
                       nu_x - pre_x,
                       nu_f_x - pre_f_x,
                       self.Jf(nu_x)]
-            
-            print(nu_row)
-        #nu_row = np.asarray(nu_row)
-        if self.debug:
-            print(nu_row)
+            nu_row = np.asarray(nu_row)
+            if self.debug:
+                print(nu_row)
 
         # Add row to DataFrame.
         self.iter_df.loc[len_iter_df] = nu_row
@@ -104,14 +105,15 @@ class Roots():
         self.debug = debug
                 
         print("Newton Method starts NOW!",
-              "Initializing first row...",
+              "Initializing solution table...",
               sep="\n")
-        for ii in range(0, 2):
-            self.Iterate()
-            
+        self.Iterate()
+        print("Calculating first guess...",
+              sep="\n")
+        self.Iterate()
         while np.linalg.norm(self.iter_df.iloc[-1]["dx"]) > self.eps:
             self.Iterate()
-        
+                
 def Demo_Funcs():
 
     def f(x):
@@ -142,7 +144,7 @@ def Demo_Funcs2():
                          (x[0]**2 + 7*x[0] + 12)*b]
         row1_Jf_x0_x1 = [1, 1]
 
-        Jf_x = np.array([row0_Jf_x0_x1, row1_Jf_x0_x1])
+        Jf_x = np.ndarray([row0_Jf_x0_x1, row1_Jf_x0_x1])
 
         return Jf_x
 
@@ -150,11 +152,10 @@ def Demo_Funcs2():
 
 
 if __name__ == "__main__":
-    print("Starting quadratic demo!")
-    [f, Jf] = Demo_Funcs()
-
-    quad_rooty = Roots(f, Jf, debug=True)
-    quad_rooty.Newton_Method(eps=0.0000001, x_start=-999)
+    #print("Starting quadratic demo!")
+    #[f, Jf] = Demo_Funcs()
+    #quad_rooty = Roots(f, Jf, debug=True)
+    #sol = quad_rooty.Newton_Method(eps=0.0000001, x_start=-999)
 
     print("Starting non-linear system of equations demo 1!")
     [f, Jf] = Demo_Funcs2()
@@ -166,8 +167,8 @@ if __name__ == "__main__":
                                           des_y=dest_y,
                                           eps=0.0000001)
     
-    # non_linear_sys_eq_rooty.Define_Function(f)
-    # non_linear_sys_eq_rooty.Define_Jacobian_Function(Jf)
+    #non_linear_sys_eq_rooty.Define_Function(f)
+    #non_linear_sys_eq_rooty.Define_Jacobian_Function(Jf)
 
     # print("Starting non-linear system of equations demo 2!")
     # non_linear_sys_eq_rooty2 = Roots()
