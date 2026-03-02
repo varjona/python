@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+
 # -*- coding: utf-8 -*-
 """
 Created on Thu May 15 20:27:48 2025
@@ -9,22 +9,53 @@ import numpy as np
 import pandas as pd
 
 class AreaUnderCurve():
+    """Calculate the area under a curve.
+    The AreaUnderCurve class is instantiated by providing the function to be evaluated. Once that
+    is init'ed, along with the solutions DataFrame, running the ApproxArea with a provided
+    tolerance (tol) value will iteratively create a row for the solutions DataFrame and compare
+    to the previous "delta_approx" - the change in the approximations. As we increase the number
+    of rectangles (num_rect) the approximation to the area under the curve should get better, and
+    so the values in "delta_approx" approach our tolerance (tol).
+
+    Usage
+    -----
+    def f(x):
+        return 3*x - 1
+    approx = AreaUnderCurve(f)
     """
-    TODO: Add description
-    """
-    def __init__(self, f, tol):
-        # Define inputs
+    def __init__(self, f):
+        """Initialize class with provided function
+        TODO: Add docstring
+
+        Parameters
+        ----------
+        f : func
+            Single, continuous variable function.
+        """
         self.f = f
-        self.tol = tol
-        
-        print('Ready to approx area under curve!')
-        
-    def ApproxArea(self, x_lims: list, approx_type: str):
+
         self.sol_df = pd.DataFrame({"num_rect": [],
                                     "delta_x": [],
                                     "approx": [],
                                     "delta_approx":[]})
+        """DataFrame: Pandas DataFrame for storing approximations"""
         
+        print('Ready to approx area under curve!')
+        
+    def ReimannApprox(self, x_lims: list, approx_type: str, ):
+        """Approximate area under the curve of the provided function.
+
+        Parameters
+        ----------
+        xlims : list
+            List containing two float values - the input values where we start and end the
+            area under the curve's approximation.
+
+        approx_type : str
+            Options include "rs" (right side), "ls" (left side), "mid" (middle), and "trap"
+            (trapezius). Used to select the value of f(x) to use for the a
+        """
+
         print(f"Limits:{x_lims}",
               f"Tolerance: {self.tol}",
               f"Approx type: {approx_type}",
